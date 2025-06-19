@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: bad-command
+spec:
+  containers:
+  - name: busybox
+    image: busybox
+    command: ["sleepy"]  # Invalid command to trigger CrashLoopBackOff
+    restartPolicy: Always
