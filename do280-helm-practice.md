@@ -128,3 +128,81 @@ helm install sampleapp internal/sampleapp
 ```
 
 ---
+
+
+Yes, the answer shown in your screenshot **is correct and will work**, **provided a few key conditions are met** in your DO280 lab or exam environment.
+
+Let me break it down:
+
+---
+
+### ✅ **What’s Correct and Why It Will Work**
+
+1. **Helm Repo Setup**
+
+   ```bash
+   helm repo add do280-repo http://helm.ocp4.example.com/charts
+   helm search repo --versions
+   ```
+
+   ✔️ Valid steps to add the Helm chart source and search versions.
+
+2. **Option 1: No `values.yaml`**
+
+   ```bash
+   helm install example-app do280-repo/etherpad --version 0.0.6
+   ```
+
+   ✔️ This is appropriate if no customization is required.
+
+3. **Option 2: Using `values.yaml`**
+
+   ```yaml
+   image:
+     repository: registry.ocp4.example.com:8443/etherpad
+     name: etherpad
+     tag: 1.8.18
+
+   route:
+     host: development-etherpad.apps.ocp4.example.com
+   ```
+
+   ✔️ If the chart accepts these values, it will override the image and route.
+
+   ```bash
+   helm install example-app do280-repo/etherpad -f values.yaml --version 0.0.6
+   ```
+
+   ✔️ This command correctly installs the chart using custom values.
+
+4. **Verification**
+
+   ```bash
+   oc get all
+   ```
+
+   ✔️ Confirms that pods, services, and routes are created successfully.
+
+---
+
+### ⚠️ **Things to Watch For**
+
+| Checkpoint       | What to verify                                                                                                                        |
+| ---------------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| ✅ Chart values   | Make sure `image.repository`, `route.host`, etc. are actual configurable values in the chart (`helm show values do280-repo/etherpad`) |
+| ✅ Helm version   | Ensure you’re using a supported Helm 3+ version                                                                                       |
+| ✅ OpenShift UID  | Some charts fail unless you set `securityContext.runAsUser` (see earlier examples)                                                    |
+| ✅ Route creation | If `route` values don’t work directly via Helm, you may need to manually expose the service: `oc expose svc <name>`                   |
+
+---
+
+### ✅ **Conclusion**
+
+Yes, this Helm installation approach is valid **and follows DO280 best practices**, but it assumes:
+
+* The chart supports the provided image and route values
+* You’re using an OpenShift-friendly chart
+* The repository and version exist
+
+---
+
