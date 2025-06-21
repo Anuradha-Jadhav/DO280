@@ -54,7 +54,7 @@ spec:
         Trek: star   # Intentional mistake (capital T)
       containers:
       - name: voyager
-        image: registry.ocp4.example.com:8443/redhattraining/hello-world-nginx
+        image: registry.ocp4.example.com:8443/redhattraining/hello-world-nginx #use nginx for free labs
         ports:
         - containerPort: 8080
 ---
